@@ -95,7 +95,7 @@ php artisan serve
 - ✅ Year Level (1-6)
 
 #### Optional Fields
-- � PDhone Number
+- 📱 Phone Number
 - 🏠 Address
 - 👤 Gender
 - 📝 Additional Notes
