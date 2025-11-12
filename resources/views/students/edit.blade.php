@@ -165,7 +165,10 @@
                             <label for="phone" class="form-label">Phone Number</label>
                             <input type="text" name="phone" id="phone" value="{{ old('phone', $student->phone) }}" 
                                    class="form-input @error('phone') border-red-300 focus:border-red-500 focus:ring-red-100 @enderror"
-                                   placeholder="+1 (555) 123-4567">
+                                   placeholder="09XX-XXX-XXXX" maxlength="13" pattern="^09\d{2}-\d{3}-\d{4}$">
+                            <p class="mt-1 text-xs text-gray-500">
+                                Philippine format: 09XX-XXX-XXXX (numbers only will be auto-formatted)
+                            </p>
                             @error('phone')
                                 <p class="mt-2 text-sm text-red-600 flex items-center">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -381,6 +384,86 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+
+    const phoneField = document.getElementById('phone');
+    if (phoneField) {
+        phoneField.addEventListener('input', function(e) {
+            formatPhoneNumber(e.target);
+        });
+        
+        phoneField.addEventListener('blur', function() {
+            validatePhoneNumber(this);
+        });
+    }
+
+    function formatPhoneNumber(input) {
+        let value = input.value.replace(/\D/g, '');
+        
+        if (value.length > 11) {
+            value = value.substring(0, 11);
+        }
+        
+        if (value.length >= 4) {
+            if (value.length <= 6) {
+                value = value.substring(0, 4) + '-' + value.substring(4);
+            } else if (value.length <= 10) {
+                value = value.substring(0, 4) + '-' + value.substring(4, 7) + '-' + value.substring(7);
+            } else {
+                value = value.substring(0, 4) + '-' + value.substring(4, 7) + '-' + value.substring(7, 11);
+            }
+        }
+        
+        input.value = value;
+    }
+
+    function validatePhoneNumber(field) {
+        const value = field.value.trim();
+        
+        if (!value) {
+            clearFieldError(field);
+            return true; 
+        }
+        
+        const mobilePattern = /^09\d{2}-\d{3}-\d{4}$/; 
+        
+        if (mobilePattern.test(value)) {
+            clearFieldError(field);
+            return true;
+        } else {
+            showFieldError(field, 'Phone number must start with 09 and follow format: 09XX-XXX-XXXX');
+            return false;
+        }
+    }
+
+    function showFieldError(field, message) {
+        field.classList.add('border-red-300', 'focus:border-red-500', 'focus:ring-red-100');
+        field.classList.remove('border-gray-300');
+        
+        const existingError = field.parentNode.querySelector('.phone-error-message');
+        if (existingError) {
+            existingError.remove();
+        }
+        
+        const errorDiv = document.createElement('p');
+        errorDiv.className = 'phone-error-message mt-2 text-sm text-red-600 flex items-center';
+        errorDiv.innerHTML = `
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            ${message}
+        `;
+        field.parentNode.appendChild(errorDiv);
+    }
+
+    function clearFieldError(field) {
+        field.classList.remove('border-red-300', 'focus:border-red-500', 'focus:ring-red-100');
+        field.classList.add('border-gray-300');
+        
+        const errorDiv = field.parentNode.querySelector('.phone-error-message');
+        if (errorDiv) {
+            errorDiv.remove();
+        }
+    }
 });
 </script>
 @endsection

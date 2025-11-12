@@ -804,15 +804,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function formatPhoneNumber(input) {
         let value = input.value.replace(/\D/g, '');
         
-        if (value.length > 0 && !value.startsWith('09')) {
-            value = '';
-        }
-        
         if (value.length > 11) {
             value = value.substring(0, 11);
         }
         
-        if (value.startsWith('09') && value.length >= 4) {
+        if (value.length >= 4) {
             if (value.length <= 6) {
                 value = value.substring(0, 4) + '-' + value.substring(4);
             } else if (value.length <= 10) {

@@ -14,7 +14,7 @@
 @endsection
 
 @section('content')
-<div class="space-y-6">
+<div class="space-y-6 mb-4">
     <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-4 lg:space-y-0">
         <div class="space-y-2">
             <div class="flex items-center space-x-4 text-sm text-gray-500">
@@ -32,7 +32,7 @@
                 </span>
             </div>
         </div>
-        <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+        <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-6">
             <form action="{{ route('students.export') }}" method="GET" class="inline">
                 @if(request('search'))
                     <input type="hidden" name="search" value="{{ request('search') }}">
@@ -57,6 +57,7 @@
             </div>
         </div>
     </div>
+    
 
     @if($students->count() > 0)
         <div class="card overflow-hidden">
@@ -292,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelectorAll('.delete-btn').forEach(button => {
         button.addEventListener('click', function(e) {
-            e.preventDefault(); // Prevent any default behavior
+            e.preventDefault();
             
             const studentName = this.getAttribute('data-student-name');
             const form = this.closest('.delete-form');
@@ -404,7 +405,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function updateStudentCount(change) {
-        // Update the main student count number using the specific ID
         const countNumberElement = document.getElementById('student-count-number');
         const countContainerElement = document.getElementById('total-students-count');
         
@@ -475,7 +475,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     const newCount = Math.max(0, currentCount + change);
                     span.textContent = newCount;
                     
-                    // Add animation
                     span.style.transition = 'all 0.3s ease';
                     span.style.transform = 'scale(1.15)';
                     span.style.backgroundColor = change < 0 ? '#fecaca' : '#bbf7d0';
