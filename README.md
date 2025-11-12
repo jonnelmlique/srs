@@ -47,7 +47,7 @@ composer run setup
 1. **Clone & Install Dependencies**
 ```bash
 git clone https://github.com/jonnelmlique/srs.git
-cd student-record-system
+cd srs
 composer install
 npm install
 ```

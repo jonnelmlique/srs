@@ -227,7 +227,7 @@
                             </button>
                         </div>
                         <pre><code>git clone https://github.com/jonnelmlique/srs.git;
-cd student-record-system
+cd srs
 composer install
 npm install</code></pre>
                     </div>
