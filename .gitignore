@@ -1,0 +1,64 @@
+# Laravel specific
+/vendor
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/bootstrap/cache/*.php
+!/bootstrap/cache/.gitkeep
+
+# Environment files
+.env
+.env.backup
+.env.production
+.env.local
+.env.*.local
+
+# IDE and editor files
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+.phpactor.json
+
+# Testing
+.phpunit.result.cache
+/coverage
+phpunit.xml
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Laravel specific files
+/auth.json
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+
+# Temporary files
+*.tmp
+*.temp
+*~
