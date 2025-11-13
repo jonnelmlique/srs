@@ -220,12 +220,11 @@
                         Print
                     </a>
                     
-                    <form action="{{ route('students.destroy', $student) }}" method="POST" 
-                          onsubmit="return confirm('Are you sure you want to delete {{ $student->full_name }}? This action cannot be undone.')"
-                          class="w-full">
+                    <form action="{{ route('students.destroy', $student) }}" method="POST" class="w-full delete-form">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="w-full btn-danger flex items-center justify-center">
+                        <button type="button" class="w-full btn-danger flex items-center justify-center delete-btn" 
+                                data-student-name="{{ $student->full_name }}">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                             </svg>
@@ -237,4 +236,112 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteBtn = document.querySelector('.delete-btn');
+    
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const studentName = this.getAttribute('data-student-name');
+            const form = this.closest('.delete-form');
+            const deleteUrl = form.action;
+            
+            if (typeof Swal === 'undefined') {
+                console.error('SweetAlert2 is not loaded!');
+                alert('Error: SweetAlert2 library is not loaded. Please refresh the page.');
+                return;
+            }
+            
+            Swal.fire({
+                title: 'Delete Student',
+                html: `Are you sure you want to delete <strong>${studentName}</strong>?<br><small class="text-gray-500">This action cannot be undone.</small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, Delete Student',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                focusCancel: true,
+                customClass: {
+                    popup: 'rounded-lg',
+                    title: 'text-lg font-semibold text-gray-900',
+                    htmlContainer: 'text-sm text-gray-600',
+                    confirmButton: 'font-medium px-6 py-2.5 rounded-lg',
+                    cancelButton: 'font-medium px-6 py-2.5 rounded-lg'
+                },
+                buttonsStyling: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Deleting...',
+                        text: 'Please wait while we delete the student record.',
+                        icon: 'info',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    
+                    fetch(deleteUrl, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: `${studentName} has been successfully deleted.`,
+                                icon: 'success',
+                                confirmButtonColor: '#059669',
+                                confirmButtonText: 'OK',
+                                customClass: {
+                                    popup: 'rounded-lg',
+                                    title: 'text-lg font-semibold text-gray-900',
+                                    confirmButton: 'font-medium px-6 py-2.5 rounded-lg'
+                                }
+                            }).then(() => {
+                                window.location.href = '{{ route("students.index") }}';
+                            });
+                        } else {
+                            throw new Error(data.message || 'Failed to delete student');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Failed to delete the student. Please try again.',
+                            icon: 'error',
+                            confirmButtonColor: '#dc2626',
+                            confirmButtonText: 'OK',
+                            customClass: {
+                                popup: 'rounded-lg',
+                                title: 'text-lg font-semibold text-gray-900',
+                                confirmButton: 'font-medium px-6 py-2.5 rounded-lg'
+                            }
+                        });
+                    });
+                }
+            });
+        });
+    }
+});
+</script>
 @endsection
